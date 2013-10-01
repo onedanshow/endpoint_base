@@ -39,12 +39,13 @@ module Sinatra
         end
 
         if request.post?
-          begin
+          #begin
             @message = ::JSON.parse(request.body.read).with_indifferent_access
             @config = config(@message)
-          rescue Exception => e
-            halt 406
-          end
+          #rescue Exception => e
+
+          #  halt 406
+          #end
         end
       end
 
