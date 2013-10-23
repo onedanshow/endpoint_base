@@ -10,7 +10,10 @@ module Sinatra
 
     module Helpers
       def config(message)
-        conf = message[:payload]['parameters'] || []
+        conf = []
+        if message[:payload].kind_of?(Hash) && message[:payload]['parameters']
+          conf = message[:payload]['parameters']
+        end
 
         conf.inject(HashWithIndifferentAccess.new) do |result, param|
           result[param[:name]] = param[:value]
@@ -34,9 +37,9 @@ module Sinatra
       app.before do
         if request.get? && request.path_info == '/'
           redirect '/endpoint.json'
-        #else
-        #  puts "HTTP_X_AUGURY_TOKEN = #{request.env["HTTP_X_AUGURY_TOKEN"]}"
-        #  halt 401 if request.env["HTTP_X_AUGURY_TOKEN"] != ENV['ENDPOINT_KEY']
+        else
+          # puts "HTTP_X_AUGURY_TOKEN = #{request.env["HTTP_X_AUGURY_TOKEN"]}"
+          halt 401 if request.env["HTTP_X_AUGURY_TOKEN"] != ENV['ENDPOINT_KEY']
         end
 
         if request.post?
@@ -44,7 +47,8 @@ module Sinatra
             @message = ::JSON.parse(request.body.read).with_indifferent_access
             @config = config(@message)
           rescue Exception => e
-            # DD: let's error raise in dev and catch in production
+            # DD: let's exception raise in dev and gracefully fail in production
+            # useful: http://support.exceptional.io/discussions/questions/352-correct-way-to-manually-send-an-exception
             ::Exceptional::Catcher.handle(e)
             halt 406
           end
