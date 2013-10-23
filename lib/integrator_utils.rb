@@ -3,6 +3,7 @@ require 'sinatra/json'
 require 'json'
 require 'active_support/core_ext/hash'
 require 'multi_json'
+require 'exceptional'
 
 module Sinatra
   module IntegratorUtils
@@ -39,13 +40,14 @@ module Sinatra
         end
 
         if request.post?
-          #begin
+          begin
             @message = ::JSON.parse(request.body.read).with_indifferent_access
             @config = config(@message)
-          #rescue Exception => e
-
-          #  halt 406
-          #end
+          rescue Exception => e
+            # DD: let's error raise in dev and catch in production
+            ::Exceptional::Catcher.handle(e)
+            halt 406
+          end
         end
       end
 
