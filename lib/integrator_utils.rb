@@ -38,8 +38,15 @@ module Sinatra
         if request.get? && request.path_info == '/'
           redirect '/endpoint.json'
         else
-          puts "HTTP_X_AUGURY_TOKEN = #{request.env["HTTP_X_AUGURY_TOKEN"]}"
-          halt 401 if request.env["HTTP_X_AUGURY_TOKEN"] != ENV['ENDPOINT_KEY']
+          begin
+            # DD: for debugging
+            ENV['ENDPOINT_KEY'] ||= ""
+            header = request.env["HTTP_X_AUGURY_TOKEN"] || ""
+            raise "Augury token did not match. Found: '#{request.env["HTTP_X_AUGURY_TOKEN"]}'" if header != ENV['ENDPOINT_KEY']
+          rescue Exception => e
+            ::Exceptional::Catcher.handle(e)
+            halt 401
+          end
         end
 
         if request.post?
