@@ -38,7 +38,7 @@ module Sinatra
         if request.get? && request.path_info == '/'
           redirect '/endpoint.json'
         else
-          # puts "HTTP_X_AUGURY_TOKEN = #{request.env["HTTP_X_AUGURY_TOKEN"]}"
+          puts "HTTP_X_AUGURY_TOKEN = #{request.env["HTTP_X_AUGURY_TOKEN"]}"
           halt 401 if request.env["HTTP_X_AUGURY_TOKEN"] != ENV['ENDPOINT_KEY']
         end
 
