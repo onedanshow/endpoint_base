@@ -16,6 +16,12 @@ Or install it yourself as:
 
     $ gem install endpoint_base
 
+In your application, you need to set the ENDPOINT_KEY environment variable.  All requests much include it in the header.
+
+If you wish to allow some GET requests without the header, put these paths in the PUBLIC_PATHS environment variable.
+
+    PUBLIC_PATHS=/public/path;/public/path2
+
 ## Usage
 
 TODO: Write usage instructions here

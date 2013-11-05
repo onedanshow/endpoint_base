@@ -37,6 +37,8 @@ module Sinatra
       app.before do
         if request.get? && request.path_info == '/'
           redirect '/endpoint.json'
+        elsif request.get? && ENV['PUBLIC_PATHS'].split(';').include?(request.path_info)
+          # DD: proceed as usual
         else
           begin
             # DD: for debugging
