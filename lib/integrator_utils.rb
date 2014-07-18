@@ -53,7 +53,7 @@ module Sinatra
 
         if request.post?
           begin
-            @message = ::JSON.parse(request.body.read).with_indifferent_access
+            @message = ::JSON.parse(request.body.read.to_s).with_indifferent_access
             @config = config(@message)
           rescue Exception => e
             # DD: let's exception raise in dev and gracefully fail in production
